@@ -1,0 +1,18 @@
+.appointment-card {
+    margin: 10px;
+}
+
+.response-button {
+    width: 70px;
+    margin-right: 10px;
+}
+
+.participant-badge {
+    font-size: 120%;
+    margin-right: 5px;
+}
+
+.status-badge {
+    width: 140px;
+    text-align: center;
+}
