@@ -33,9 +33,13 @@ namespace LetsGoOutDemo.Functions
         [FunctionName("new-appointment")]
         public static async Task<IActionResult> Invite(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequest request,
-            [OrchestrationClient] DurableOrchestrationClient orchestrationClient)
+            [OrchestrationClient] DurableOrchestrationClient orchestrationClient,
+            ILogger log)
         {
-            var nickNames = (await request.ReadAsStringAsync()).Split(',').ToList();
+            var nickNames = (await request.ReadAsStringAsync())
+                .Split(',')
+                .Select(n => n.Trim())
+                .ToList();
 
             string initiatorNickName = request.Headers[NickNameHeaderName];
             if(string.IsNullOrEmpty(initiatorNickName))
@@ -47,8 +51,10 @@ namespace LetsGoOutDemo.Functions
             // Also adding the initiator to the list
             nickNames.Add(initiatorNickName);
 
-            // Here is where the Saga instance ID is being generated
-            string appointmentId = DateTime.UtcNow.ToString("o");
+            // Here is where the Saga instance ID is being generated.
+            // Some prefix is needed before a sortable datetime, otherwise SignalR treats this value as a datetime 
+            // (not as a string) somewhere inside and trims trailing zeroes from it, effectively corrupting this ID.
+            string appointmentId = "APP-" + DateTime.UtcNow.ToString("o");
 
             // Starting the appointment Saga
             await orchestrationClient.StartNewAsync(nameof(ProcessAppointmentOrchestrator), 
@@ -92,7 +98,7 @@ namespace LetsGoOutDemo.Functions
                 if(!response.IsAccepted)
                 {
                     // ... then notifying everybody and finishing the Saga
-                    appointment.Status = AppointmentStatusEnum.Rejected;
+                    appointment.Status = AppointmentStatusEnum.Declined;
                     await context.CallActivityWithRetryAsync<Appointment>(nameof(NotifyParticipants), retryOptions, appointment);
                     break;
                 }
@@ -123,12 +129,11 @@ namespace LetsGoOutDemo.Functions
 
             foreach (string nickName in nickNames)
             {
-                await signalRMessages.AddAsync(
-                    new SignalRMessage
-                    {
-                        UserId = nickName,
-                        Target = "appointment-state-changed",
-                        Arguments = new[] 
+                var signalRMessage = new SignalRMessage
+                {
+                    UserId = nickName,
+                    Target = "appointment-state-changed",
+                    Arguments = new[]
                         {
                             new
                             {
@@ -137,7 +142,8 @@ namespace LetsGoOutDemo.Functions
                                 status = appointment.Status
                             }
                         }
-                    });
+                };
+                await signalRMessages.AddAsync(signalRMessage);
             }
         }
 
@@ -146,7 +152,8 @@ namespace LetsGoOutDemo.Functions
         public static async Task RespondToAppointment(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "appointments/{appointmentId}")] HttpRequest request,            
             string appointmentId,
-            [OrchestrationClient] DurableOrchestrationClient orchestrationClient)
+            [OrchestrationClient] DurableOrchestrationClient orchestrationClient,
+            ILogger log)
         {
             // Transforming client's response into an Event
             var status = Enum.Parse<AppointmentStatusEnum>(await request.ReadAsStringAsync());

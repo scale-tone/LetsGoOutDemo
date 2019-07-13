@@ -6,7 +6,7 @@ export const BackendBaseUri = process.env.REACT_APP_BACKEND_BASE_URI as string;
 export enum AppointmentStatusEnum {
     Pending = 0,
     Accepted,
-    Rejected
+    Declined
 }
 
 // State of one particular appointment
@@ -38,6 +38,6 @@ export class AppointmentsState {
     respondToAppointment(id: string, accepted: boolean) {
 
         // Responding to the server with Arranged status
-        axios.post(`${BackendBaseUri}/appointments/${id}`, accepted ? AppointmentStatusEnum.Accepted : AppointmentStatusEnum.Rejected);        
+        axios.post(`${BackendBaseUri}/appointments/${id}`, accepted ? AppointmentStatusEnum.Accepted : AppointmentStatusEnum.Declined);        
     }
 }

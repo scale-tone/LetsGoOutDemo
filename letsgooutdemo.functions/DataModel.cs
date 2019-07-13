@@ -7,7 +7,7 @@ namespace LetsGoOutDemo.Functions
     {
         Pending = 0,
         Accepted,
-        Rejected
+        Declined
     }
 
     // Internal representation of an appointment

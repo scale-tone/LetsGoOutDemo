@@ -27,9 +27,9 @@ export class Appointments extends React.Component<{ nickName: string, state: App
                     statusDiv = <div className="alert alert-success status-badge h5">Agreed :)</div>;
                     buttonsDisabled = true;
                     break;
-                case AppointmentStatusEnum.Rejected:
+                case AppointmentStatusEnum.Declined:
                     cardBorderStyle = 'border-danger';
-                    statusDiv = <div className="alert alert-danger status-badge h5">No Luck :(</div>;
+                    statusDiv = <div className="alert alert-danger status-badge h5">Declined :(</div>;
                     buttonsDisabled = true;
                     break;
             }
@@ -40,7 +40,7 @@ export class Appointments extends React.Component<{ nickName: string, state: App
                         <div className="row">
                             <div className="col-sm-3">{statusDiv}</div>
                             <div className="col-sm-5">
-                                Are you going out with {this.renderParticipants(appointment.participants)} tonight?
+                                Are you going out with {this.renderParticipants(appointment.participants)} ?
                             </div>
                             <div className="col-sm-4 text-center">
                                 <button className="btn btn-success response-button"
