@@ -11,16 +11,16 @@ The actual logic is implemented [here](https://github.com/scale-tone/LetsGoOutDe
 ## How to run
 
 * [Get yourself an Azure SignalR Service instance](https://docs.microsoft.com/en-us/azure/azure-signalr/signalr-quickstart-dotnet-core#create-an-azure-signalr-resource).
-* In the project root folder create a local.settings.json file, that looks like this:
+* In the project root folder create a **local.settings.json** file, that looks like this:
+
 ``
 {
     "IsEncrypted": false,
     "Values": {
-        "AzureWebJobsStorage": "<your Azure Storage Account Connection String>",
+        "AzureWebJobsStorage": "[your Azure Storage Account Connection String]",
         "FUNCTIONS_WORKER_RUNTIME": "dotnet",
-        "AzureSignalRConnectionString": "<your Azure SignalR Connection String>"
+        "AzureSignalRConnectionString": "[your Azure SignalR Connection String]"
     },
-
     "Host": {
         "LocalHttpPort": 7071,
         "CORS": "http://localhost:3000",
