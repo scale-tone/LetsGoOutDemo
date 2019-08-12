@@ -25,7 +25,7 @@ export class LoginState {
     // Establishes SignalR connection and configures Axios
     @action.bound
     login() {
-
+        
         // Configuring SignalR
         const signalrConn = new HubConnectionBuilder()
             .withUrl(`${BackendBaseUri}?nick-name=${this.nickNameInputText}`)
@@ -33,7 +33,7 @@ export class LoginState {
         
         // Also telling axios to put this name as an HTTP header into each request
         axios.defaults.headers.common['x-nick-name'] = this.nickNameInputText;
-        
+
         // Mounting the event handler
         signalrConn.on('appointment-state-changed', this.signalRMessageHandler);
 

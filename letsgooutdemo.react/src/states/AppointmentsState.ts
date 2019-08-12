@@ -37,7 +37,10 @@ export class AppointmentsState {
     @action.bound
     respondToAppointment(id: string, accepted: boolean) {
 
+        const status = accepted ? AppointmentStatusEnum.Accepted : AppointmentStatusEnum.Declined;
+
         // Responding to the server with Arranged status
-        axios.post(`${BackendBaseUri}/appointments/${id}`, accepted ? AppointmentStatusEnum.Accepted : AppointmentStatusEnum.Declined);        
+        axios.post(`${BackendBaseUri}/appointments/${id}`, status, { headers: { 'Content-Type': 'text/plain' } })
+            .catch(err => alert(`Failed to send a response! ${err}`));
     }
 }

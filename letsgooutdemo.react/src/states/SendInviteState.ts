@@ -16,7 +16,7 @@ export class SendInviteState {
         const nickNames = this.nickNamesInputText;
         this.nickNamesInputText = '';
 
-        axios.post(`${BackendBaseUri}/new-appointment`, nickNames)
+        axios.post(`${BackendBaseUri}/new-appointment`, nickNames, { headers: { 'Content-Type': 'text/plain' }})
             .catch(err => alert(`Failed to send an invite! ${err}`));
     }
 }

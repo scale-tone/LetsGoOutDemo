@@ -78,7 +78,7 @@ namespace LetsGoOutDemo.Functions
             var appointment = context.GetInput<Appointment>();
 
             // Retry policy for calling our activity functions
-            var retryOptions = new RetryOptions(TimeSpan.FromSeconds(2), 3);            
+            var retryOptions = new RetryOptions(TimeSpan.FromSeconds(2), 3);
 
             // Notifying all participants that a new appointment was created
             await context.CallActivityWithRetryAsync<Appointment>(nameof(NotifyParticipants), retryOptions, appointment);
@@ -149,20 +149,27 @@ namespace LetsGoOutDemo.Functions
 
         // Receives responses from participants
         [FunctionName("appointments")]
-        public static async Task RespondToAppointment(
+        public static async Task<IActionResult> RespondToAppointment(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "appointments/{appointmentId}")] HttpRequest request,            
             string appointmentId,
             [OrchestrationClient] DurableOrchestrationClient orchestrationClient,
             ILogger log)
         {
-            // Transforming client's response into an Event
             var status = Enum.Parse<AppointmentStatusEnum>(await request.ReadAsStringAsync());
+            if (status == AppointmentStatusEnum.Pending)
+            {
+                return new BadRequestResult();
+            }
+
+            // Transforming client's response into an Event
             var response = new AppointmentResponse
             {
                 NickName = request.Headers[NickNameHeaderName],
                 IsAccepted = (status == AppointmentStatusEnum.Accepted)
             };
             await orchestrationClient.RaiseEventAsync(appointmentId, nameof(RespondToAppointment), response);
+
+            return new OkResult();
         }
     }
 }
