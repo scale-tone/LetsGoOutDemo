@@ -5,5 +5,5 @@ Lets you login under some nickName and then send appointment requests to others 
 
 ## How to run
 
-* Compile and run [the backend](https://github.com/scale-tone/LetsGoOutDemo/tree/master/letsgooutdemo.functions) on your devbox.
+* Compile and run [any of the backend implementations](https://github.com/scale-tone/LetsGoOutDemo/tree/master/backend) on your devbox.
 * **npm run start**
