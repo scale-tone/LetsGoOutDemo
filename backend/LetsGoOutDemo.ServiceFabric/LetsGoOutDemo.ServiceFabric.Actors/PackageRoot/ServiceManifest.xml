@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ServiceManifest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Name="LetsGoOutDemo.ServiceFabric.ActorsPkg" Version="1.0.0" xmlns="http://schemas.microsoft.com/2011/01/fabric">
+  <ServiceTypes>
+    <StatefulServiceType ServiceTypeName="AppointmentActorServiceType" HasPersistedState="true">
+      <Extensions>
+        <Extension Name="__GeneratedServiceType__" GeneratedId="393797eb-44a7-459e-900d-f061ddbedd2b|Persisted">
+          <GeneratedNames xmlns="http://schemas.microsoft.com/2015/03/fabact-no-schema">
+            <DefaultService Name="AppointmentActorService" />
+            <ReplicatorEndpoint Name="AppointmentActorServiceReplicatorEndpoint" />
+            <ReplicatorConfigSection Name="AppointmentActorServiceReplicatorConfig" />
+            <ReplicatorSecurityConfigSection Name="AppointmentActorServiceReplicatorSecurityConfig" />
+            <StoreConfigSection Name="AppointmentActorServiceLocalStoreConfig" />
+            <ServiceEndpointV2_1 Name="AppointmentActorServiceEndpointV2_1" />
+          </GeneratedNames>
+        </Extension>
+      </Extensions>
+    </StatefulServiceType>
+  </ServiceTypes>
+  <CodePackage Name="Code" Version="1.0.0">
+    <EntryPoint>
+      <ExeHost>
+        <Program>LetsGoOutDemo.ServiceFabric.Actors.exe</Program>
+      </ExeHost>
+    </EntryPoint>
+    <EnvironmentVariables>
+      <EnvironmentVariable Name="AzureSignalRConnectionString" Value="Put your Asure SignalR Service Connection String into this variable in ApplicationParameters/Local.1Node.xml" />
+    </EnvironmentVariables>
+  </CodePackage>
+  <ConfigPackage Name="Config" Version="1.0.0" />
+  <Resources>
+    <Endpoints>
+      <Endpoint Name="AppointmentActorServiceEndpointV2_1" />
+      <Endpoint Name="AppointmentActorServiceReplicatorEndpoint" />
+    </Endpoints>
+  </Resources>
+  <!-- The content will be generated during build -->
+</ServiceManifest>
