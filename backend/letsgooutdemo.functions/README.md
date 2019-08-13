@@ -30,3 +30,5 @@ The actual logic is implemented [here](https://github.com/scale-tone/LetsGoOutDe
 ``
 
 * **func start**
+
+This will compile and run the Functions project on your local devbox under http://localhost:7071/api.
