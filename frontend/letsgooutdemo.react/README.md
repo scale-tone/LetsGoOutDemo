@@ -1,7 +1,7 @@
 # LetsGoOutDemo.React
 
 A React+MobX+TypeScript Single-Page App, acting as a UI for LetsGoOutDemo.Functions.
-Lets you login under some nickName and then send appointment requests to others and accept/reject those appointment requests.
+Lets you login under some nickName and then send appointment requests to others and accept/reject those appointment requests. Whenever an appointment state changes, the UI gets notified about that via [Azure SignalR Service](https://docs.microsoft.com/en-us/azure/azure-signalr/signalr-overview).
 
 ## How to run
 
