@@ -9,6 +9,9 @@ using Microsoft.ServiceFabric.Actors.Client;
 
 namespace LetsGoOutDemo.ServiceFabric.WebApi.Controllers
 {
+    /// <summary>
+    /// Implements the REST API for handling the appointment negotiation process
+    /// </summary>
     public class AppointmentsController : Controller
     {
         private const string NickNameHeaderName = "x-nick-name";
@@ -25,7 +28,7 @@ namespace LetsGoOutDemo.ServiceFabric.WebApi.Controllers
             string initiatorNickName = this.Request.Headers[NickNameHeaderName];
             if (string.IsNullOrEmpty(initiatorNickName))
             {
-                // The initiator's nickName should always be send via that header
+                // The initiator's nickName should always be sent via that header
                 return this.Unauthorized();
             }
 
