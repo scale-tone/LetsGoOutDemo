@@ -14,5 +14,6 @@ namespace LetsGoOutDemo.ServiceFabric.Actors.Interfaces
     public class Constants
     {
         public const string AzureSignalRConnectionStringEnvironmentVariableName = "AzureSignalRConnectionString";
+        public const string AllowedCorsOriginsVariableName = "AllowedCorsOrigins";
     }
 }

@@ -42,8 +42,8 @@ namespace LetsGoOutDemo.ServiceFabric.WebApi
 
             app.UseCors(
                 builder => builder
-                    // .AllowAnyOrigin()  This doesn't work: The value of the 'Access-Control-Allow-Origin' header in the response must not be the wildcard '*' when the request's credentials mode is 'include'
-                    .WithOrigins("http://localhost:3000")
+                    // .AllowAnyOrigin()  This doesn't work. The value of the 'Access-Control-Allow-Origin' header in the response must not be the wildcard '*' when the request's credentials mode is 'include'
+                    .WithOrigins(Environment.GetEnvironmentVariable(Constants.AllowedCorsOriginsVariableName))
                     .AllowAnyMethod()
                     .AllowAnyHeader()
                     .AllowCredentials()

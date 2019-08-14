@@ -21,6 +21,7 @@
     <EnvironmentVariables>
       <EnvironmentVariable Name="ASPNETCORE_ENVIRONMENT" Value=""/>
       <EnvironmentVariable Name="AzureSignalRConnectionString" Value="Put your Asure SignalR Service Connection String into this variable in ApplicationParameters/Local.1Node.xml" />
+      <EnvironmentVariable Name="AllowedCorsOrigins" Value="http://localhost:3000"/>
     </EnvironmentVariables>
   </CodePackage>
 
