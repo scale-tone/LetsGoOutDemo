@@ -20,6 +20,10 @@ namespace LetsGoOutDemo.ServiceFabric.Actors
     [StatePersistence(StatePersistence.Persisted)]
     internal class AppointmentActor : Actor, IAppointmentActor
     {
+        private const string ParticipantsState = nameof(ParticipantsState);
+        private const string ParticipantsAcceptedState = nameof(ParticipantsAcceptedState);
+        private const string AppointmentStateChangedClientHandlerName = "appointment-state-changed";
+
         /// <summary>
         /// Initializes a new instance of AppointmentActor
         /// </summary>
@@ -33,8 +37,8 @@ namespace LetsGoOutDemo.ServiceFabric.Actors
         /// <inheritdoc/>
         public async Task InitializeParticipantsAsync(HashSet<string> participants)
         {
-            await this.StateManager.AddStateAsync("participants", participants);
-            await this.StateManager.AddStateAsync("participants-accepted", new HashSet<string>());
+            await this.StateManager.AddStateAsync(ParticipantsState, participants);
+            await this.StateManager.AddStateAsync(ParticipantsAcceptedState, new HashSet<string>());
 
             await this.NotifyParticipantsAsync(participants.ToArray(), AppointmentStatusEnum.Pending);
         }
@@ -42,7 +46,7 @@ namespace LetsGoOutDemo.ServiceFabric.Actors
         /// <inheritdoc/>
         public async Task SetResponseAsync(string participant, bool isAccepted)
         {
-            var participants = await this.StateManager.GetStateAsync<HashSet<string>>("participants");
+            var participants = await this.StateManager.GetStateAsync<HashSet<string>>(ParticipantsState);
 
             // Just to make sure this response came from one of participants
             if (!participants.Contains(participant))
@@ -54,10 +58,13 @@ namespace LetsGoOutDemo.ServiceFabric.Actors
             if (!isAccepted)
             {
                 await this.NotifyParticipantsAsync(participants.ToArray(), AppointmentStatusEnum.Declined);
+                // This effectively terminates the workflow, so no need to save the changed state.
+                // In real scenario though, you would want to persist the fact that the appointment was rejected,
+                // to protect from participants who accidentally missed the notification.
                 return;
             }
 
-            var participantsAccepted = await this.StateManager.GetStateAsync<HashSet<string>>("participants-accepted");
+            var participantsAccepted = await this.StateManager.GetStateAsync<HashSet<string>>(ParticipantsAcceptedState);
             participantsAccepted.Add(participant);
 
             // If everybody have accepted
@@ -65,6 +72,9 @@ namespace LetsGoOutDemo.ServiceFabric.Actors
             {
                 await this.NotifyParticipantsAsync(participants.ToArray(), AppointmentStatusEnum.Accepted);
             }
+
+            // Saving the changed state
+            await this.StateManager.SetStateAsync(ParticipantsAcceptedState, participantsAccepted);
         }
 
         /// <summary>
@@ -79,7 +89,7 @@ namespace LetsGoOutDemo.ServiceFabric.Actors
 
             foreach (string nickName in nickNames)
             {
-                await hubContext.Clients.User(nickName).SendCoreAsync("appointment-state-changed",
+                await hubContext.Clients.User(nickName).SendCoreAsync(AppointmentStateChangedClientHandlerName,
                     new[]
                     {
                         new
@@ -113,7 +123,7 @@ namespace LetsGoOutDemo.ServiceFabric.Actors
                 })
                 .Build();
 
-            return serviceManager.CreateHubContextAsync("letsgoouthub");
+            return serviceManager.CreateHubContextAsync(nameof(LetsGoOutHub));
         }
     }
 }

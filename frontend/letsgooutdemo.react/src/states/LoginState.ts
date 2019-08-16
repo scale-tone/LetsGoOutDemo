@@ -37,6 +37,20 @@ export class LoginState {
         // Mounting the event handler
         signalrConn.on('appointment-state-changed', this.signalRMessageHandler);
 
+        // Background reconnects are essential here. That's because in 'Default' or 'Classic' service mode
+        // clients get forcibly disconnected, when your backend restarts.
+        signalrConn.onclose(() => {
+            var tryToReconnect = () => {
+                console.log('Reconnecting to SignalR...');
+                signalrConn.start().then(() => {
+                    console.log('Reconnected to SignalR!');
+                }, () => { 
+                    setTimeout(tryToReconnect, 5000);
+                })
+            }
+            tryToReconnect();
+        });
+
         // Establishing SignalR connection
         signalrConn.start().then(
             () => {
