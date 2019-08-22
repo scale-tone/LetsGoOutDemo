@@ -1,3 +1,5 @@
+<img src="https://dev.azure.com/kolepes/LetsGoOutDemo/_apis/build/status/LetsGoOutDemo-Azure%20Functions%20for%20.NET-CI"/>
+
 # LetsGoOutDemo.Functions
 
 Implements the Appointments Saga with [Azure Durable Functions](https://docs.microsoft.com/en-us/azure/azure-functions/durable/durable-functions-overview).
