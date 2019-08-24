@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
+using System.Linq;
 
 namespace LetsGoOutDemo.Functions
 {
@@ -11,53 +12,29 @@ namespace LetsGoOutDemo.Functions
         // Serves static files for client UI
         [FunctionName("ui")]
         public static IActionResult Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "ui/{path1?}/{path2?}/{path3?}")] 
-                HttpRequest req,
-            string path1, string path2, string path3
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "ui/{p1?}/{p2?}/{p3?}")] HttpRequest req
         )
         {
-            switch(path1)
+            var path = req.Path.Value.Replace("/api/ui", wwwroot);
+            var contentType = FileMap.FirstOrDefault((kv => path.StartsWith(kv[0])));
+            if(contentType != null)
             {
-                case "static":
-                    return ServeStatic(path1, path2, path3);
-                case "manifest.json":
-                    return ServeManifestJson();
-                case "favicon.ico":
-                    return ServeFavicon();
-                default:
-                    return ServeIndexHtml();
+                return File.Exists(path) ? 
+                    (IActionResult)new FileStreamResult(File.OpenRead(path), contentType[1]) : 
+                    new NotFoundResult();
             }
+            // Returning index.html by default, to support client routing
+            return new FileStreamResult(File.OpenRead($"{wwwroot}/index.html"), "text/html; charset=UTF-8");
         }
 
         private const string wwwroot = "./wwwroot";
-        private static IActionResult ServeStatic(string path1, string path2, string path3)
+        private static readonly string[][] FileMap = new string[][]
         {
-            string contentType;
-            switch (path2)
-            {
-                case "css":
-                    contentType = "text/css; charset=utf-8";
-                    break;
-                case "media":
-                    contentType = "image/svg+xml; charset=UTF-8";
-                    break;
-                default:
-                    contentType = "application/javascript; charset=UTF-8";
-                    break;
-            }
-            return new FileStreamResult(File.OpenRead($"{wwwroot}/{path1}/{path2}/{path3}"), contentType);
-        }
-        private static IActionResult ServeManifestJson()
-        {
-            return new FileStreamResult(File.OpenRead($"{wwwroot}/manifest.json"), "application/json; charset=UTF-8");
-        }
-        private static IActionResult ServeFavicon()
-        {
-            return new FileStreamResult(File.OpenRead($"{wwwroot}/favicon.ico"), "image/x-icon");
-        }
-        private static IActionResult ServeIndexHtml()
-        {
-            return new FileStreamResult(File.OpenRead($"{wwwroot}/index.html"), "text/html; charset=UTF-8");
-        }
+            new [] {$"{wwwroot}/static/css/", "text/css; charset=utf-8"},
+            new [] {$"{wwwroot}/static/media/", "image/svg+xml; charset=UTF-8"},
+            new [] {$"{wwwroot}/static/js/", "application/javascript; charset=UTF-8"},
+            new [] {$"{wwwroot}/manifest.json", "application/json; charset=UTF-8"},
+            new [] {$"{wwwroot}/favicon.ico", "image/x-icon"}
+        };
     }
 }
