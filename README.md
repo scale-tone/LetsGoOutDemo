@@ -1,11 +1,36 @@
-# LetsGoOutDemo
+<img src="https://dev.azure.com/kolepes/LetsGoOutDemo/_apis/build/status/LetsGoOutDemo-Azure%20Functions%20for%20.NET-CI"/>
 
-This demo project demonstrates various ways of implementing the Saga/Workflow design pattern in Azure.
+# LetsGoOutDemo.Functions
 
-The use case is the same and it is pretty basic: we build a stateful service, that handles organizing appointments with multiple participants. The participants communicate with the service via a client web UI and can submit appointment proposals, accept and/or decline them. The service takes care of maintaining the appointment state and notifies participants about state changes.
+Implements the Appointments Saga with [Azure Durable Functions](https://docs.microsoft.com/en-us/azure/azure-functions/durable/durable-functions-overview).
+Sends appointment state change notifications to web clients via [Azure SignalR Service](https://docs.microsoft.com/en-us/azure/azure-signalr/signalr-overview), thus demonstrating how to use [SignalR](http://signalr.net) in Serverless scenarios.
+The actual logic is implemented [here](https://github.com/scale-tone/LetsGoOutDemo/blob/master/backend/LetsGoOutDemo.Functions/LetsGoOutSaga.cs).
 
-* [**LetsGoOutDemo.Functions**](https://github.com/scale-tone/LetsGoOutDemo/tree/master/backend/letsgooutdemo.functions#letsgooutdemofunctions) - backend implemented with Azure Durable Functions (C#). Appointment state change notifications are sent via [Azure SignalR Service](https://docs.microsoft.com/en-us/azure/azure-signalr/signalr-overview).
+## Prerequisites
 
-* [**LetsGoOutDemo.ServiceFabric**](https://github.com/scale-tone/LetsGoOutDemo/tree/master/backend/LetsGoOutDemo.ServiceFabric#letsgooutdemoservicefabric) - backend implemented with [Service Fabric Reliable Actors](https://docs.microsoft.com/en-us/azure/service-fabric/service-fabric-reliable-actors-introduction). Appointment state change notifications are also sent via [Azure SignalR Service](https://docs.microsoft.com/en-us/azure/azure-signalr/signalr-overview).
+[Azure Functions Core Tools](https://www.npmjs.com/package/azure-functions-core-tools).
 
-* [**LetsGoOutDemo.React**](https://github.com/scale-tone/LetsGoOutDemo/tree/master/frontend/letsgooutdemo.react#letsgooutdemoreact) - a React+MobX+TypeScript simple web UI, that communicates with the backend and with [Azure SignalR Service](https://docs.microsoft.com/en-us/azure/azure-signalr/signalr-overview).
+## How to run
+
+* [Get yourself an Azure SignalR Service instance](https://docs.microsoft.com/en-us/azure/azure-signalr/signalr-quickstart-dotnet-core#create-an-azure-signalr-resource).
+* In the project root folder create a **local.settings.json** file, that looks like this:
+
+``
+{
+    "IsEncrypted": false,
+    "Values": {
+        "AzureWebJobsStorage": "[your Azure Storage Account Connection String]",
+        "FUNCTIONS_WORKER_RUNTIME": "dotnet",
+        "AzureSignalRConnectionString": "[your Azure SignalR Connection String]"
+    },
+    "Host": {
+        "LocalHttpPort": 7071,
+        "CORS": "http://localhost:3000",
+        "CORSCredentials": true
+    }
+}
+``
+
+* **func start**
+
+This will compile and run the Functions project on your local devbox under http://localhost:7071/api.
