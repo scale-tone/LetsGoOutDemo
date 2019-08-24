@@ -27,7 +27,7 @@ namespace LetsGoOutDemo.Functions
             return new FileStreamResult(File.OpenRead($"{wwwroot}/index.html"), "text/html; charset=UTF-8");
         }
 
-        private const string wwwroot = "./wwwroot";
+        private const string wwwroot = "wwwroot";
         private static readonly string[][] FileMap = new string[][]
         {
             new [] {$"{wwwroot}/static/css/", "text/css; charset=utf-8"},
