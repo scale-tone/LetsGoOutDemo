@@ -51,6 +51,9 @@ namespace LetsGoOutDemo.ServiceFabric.WebApi
 
             app.UseMvc();
 
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
+
             app.UseAzureSignalR(routes =>
             {
                 // Hub name is derived from generic type parameter.
