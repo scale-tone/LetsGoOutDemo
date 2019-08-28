@@ -12,7 +12,7 @@ The actual logic is implemented [here](https://github.com/scale-tone/LetsGoOutDe
 
 ## How to run
 
-* [Get yourself an Azure SignalR Service instance](https://docs.microsoft.com/en-us/azure/azure-signalr/signalr-quickstart-dotnet-core#create-an-azure-signalr-resource).
+* [Get yourself an Azure SignalR Service instance](https://docs.microsoft.com/en-us/azure/azure-signalr/signalr-quickstart-dotnet-core#create-an-azure-signalr-resource). NOTE: the [**Service Mode** setting shoud be set to **Serverless**](https://docs.microsoft.com/en-us/azure/azure-signalr/signalr-quickstart-azure-functions-csharp)!
 * In the project root folder create a **local.settings.json** file, that looks like this:
 
 ``
