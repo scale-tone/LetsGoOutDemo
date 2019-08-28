@@ -13,6 +13,8 @@ Implements the appointment management with [Service Fabric Reliable Actors](http
 * Press F5 in your Visual Studio.
 * Wait until the backend becomes available under http://localhost:7071/api URL.
 
+[UI statics](https://github.com/scale-tone/LetsGoOutDemo/tree/master/frontend/letsgooutdemo.react#letsgooutdemoreact) are committed to the repo and are served by the endpoint itself, so you don't necessarily need to compile them. Just navigate to http://localhost:7071/api/ui.
+
 ## Details
 
 The solution contains two projects (both being deployed as services into your Service Fabric cluster):
