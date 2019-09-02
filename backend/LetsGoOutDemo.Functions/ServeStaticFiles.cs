@@ -35,6 +35,7 @@ namespace LetsGoOutDemo.Functions
             new [] {"/api/ui/static/media/", "image/svg+xml; charset=UTF-8"},
             new [] {"/api/ui/static/js/", "application/javascript; charset=UTF-8"},
             new [] {"/api/ui/manifest.json", "application/json; charset=UTF-8"},
+            new [] {"/api/ui/service-worker.js", "application/javascript; charset=UTF-8"},
             new [] {"/api/ui/favicon.ico", "image/x-icon"}
         };
     }

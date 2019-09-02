@@ -9,7 +9,19 @@ export const BackendBaseUri = process.env.REACT_APP_BACKEND_BASE_URI as string;
 // Login/logout logic
 export class LoginState {
 
-    constructor(private signalRMessageHandler: (message: any) => any) {}
+    constructor(private signalRMessageHandler: (message: any) => any) {
+
+        // On any auth-related error, forcing a page reload, which in turn forces a re-login
+        axios.interceptors.response.use(response => response, err => {
+
+            if (err.message === 'Network Error') {
+                location.reload(true);
+                return;
+            }
+
+            return Promise.reject(err);
+        });
+    }
 
     @observable
     nickName: string = '';
