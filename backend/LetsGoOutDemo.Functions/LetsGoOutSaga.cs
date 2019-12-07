@@ -1,13 +1,14 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Azure.WebJobs.Extensions.SignalRService;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace LetsGoOutDemo.Functions
 {
@@ -33,7 +34,7 @@ namespace LetsGoOutDemo.Functions
         [FunctionName("new-appointment")]
         public static async Task<IActionResult> Invite(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequest request,
-            [OrchestrationClient] DurableOrchestrationClient orchestrationClient,
+            [DurableClient] IDurableClient durableClient,
             ILogger log)
         {
             var nickNames = (await request.ReadAsStringAsync())
@@ -57,7 +58,7 @@ namespace LetsGoOutDemo.Functions
             string appointmentId = "APP-" + DateTime.UtcNow.ToString("o");
 
             // Starting the appointment Saga
-            await orchestrationClient.StartNewAsync(nameof(ProcessAppointmentOrchestrator), 
+            await durableClient.StartNewAsync(nameof(ProcessAppointmentOrchestrator), 
                 appointmentId, 
                 new Appointment
                 {
@@ -71,7 +72,7 @@ namespace LetsGoOutDemo.Functions
         // Saga Orchestration method. The Saga logic is concentrated here.
         [FunctionName(nameof(ProcessAppointmentOrchestrator))]
         public static async Task ProcessAppointmentOrchestrator(
-            [OrchestrationTrigger] DurableOrchestrationContext context,
+            [OrchestrationTrigger] IDurableOrchestrationContext context,
             ILogger log)
         {
             string appointmentId = context.InstanceId;
@@ -119,7 +120,7 @@ namespace LetsGoOutDemo.Functions
         // Activity function, that informs participants of the appointment state changes
         [FunctionName(nameof(NotifyParticipants))]
         public static async Task NotifyParticipants(
-            [ActivityTrigger] DurableActivityContext context,
+            [ActivityTrigger] IDurableActivityContext context,
             [SignalR(HubName = SignalRHubName)] IAsyncCollector<SignalRMessage> signalRMessages,
             ILogger log)
         {
@@ -152,7 +153,7 @@ namespace LetsGoOutDemo.Functions
         public static async Task<IActionResult> RespondToAppointment(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "appointments/{appointmentId}")] HttpRequest request,            
             string appointmentId,
-            [OrchestrationClient] DurableOrchestrationClient orchestrationClient,
+            [DurableClient] IDurableClient durableClient,
             ILogger log)
         {
             var status = Enum.Parse<AppointmentStatusEnum>(await request.ReadAsStringAsync());
@@ -167,7 +168,7 @@ namespace LetsGoOutDemo.Functions
                 NickName = request.Headers[NickNameHeaderName],
                 IsAccepted = (status == AppointmentStatusEnum.Accepted)
             };
-            await orchestrationClient.RaiseEventAsync(appointmentId, nameof(RespondToAppointment), response);
+            await durableClient.RaiseEventAsync(appointmentId, nameof(RespondToAppointment), response);
 
             return new OkResult();
         }
