@@ -30,7 +30,7 @@ namespace LetsGoOutDemo.Functions
     // Internal representation of participant's response
     public class AppointmentResponse
     {
-        public string NickName{ get; set; }
+        public string NickName { get; set; }
         public bool IsAccepted { get; set; }
     }
 }
