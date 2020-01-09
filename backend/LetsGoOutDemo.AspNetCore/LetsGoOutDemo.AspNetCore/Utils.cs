@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json;
 using StackExchange.Redis;
 using System.Collections.Generic;
 using System.IO;
@@ -34,6 +35,14 @@ namespace LetsGoOutDemo.AspNetCore
         public static HashSet<string> FromRedisValues(this RedisValue[] values)
         {
             return new HashSet<string>(values.Select(v => (string)v));
+        }
+
+        /// <summary>
+        /// Converts JSON string to dynamic object
+        /// </summary>
+        public static dynamic FromJson(this string json)
+        {
+            return JsonConvert.DeserializeObject(json);
         }
     }
 }
