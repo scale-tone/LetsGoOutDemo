@@ -78,11 +78,8 @@ namespace LetsGoOutDemo.Functions
             string appointmentId = context.InstanceId;
             var appointment = context.GetInput<Appointment>();
 
-            // Retry policy for calling our activity functions
-            var retryOptions = new RetryOptions(TimeSpan.FromSeconds(2), 3);
-
             // Notifying all participants that a new appointment was created
-            await context.CallActivityWithRetryAsync<Appointment>(nameof(NotifyParticipants), retryOptions, appointment);
+            await context.CallActivityWithRetryAsync<Appointment>(nameof(NotifyParticipants), RetryOptions, appointment);
 
             // Now waiting for responses
             while(true)
@@ -100,7 +97,7 @@ namespace LetsGoOutDemo.Functions
                 {
                     // ... then notifying everybody and finishing the Saga
                     appointment.Status = AppointmentStatusEnum.Declined;
-                    await context.CallActivityWithRetryAsync<Appointment>(nameof(NotifyParticipants), retryOptions, appointment);
+                    await context.CallActivityWithRetryAsync<Appointment>(nameof(NotifyParticipants), RetryOptions, appointment);
                     break;
                 }
 
@@ -111,7 +108,7 @@ namespace LetsGoOutDemo.Functions
                 {
                     // ... then notifying everybody and finishing the Saga
                     appointment.Status = AppointmentStatusEnum.Accepted;
-                    await context.CallActivityWithRetryAsync<Appointment>(nameof(NotifyParticipants), retryOptions, appointment);
+                    await context.CallActivityWithRetryAsync<Appointment>(nameof(NotifyParticipants), RetryOptions, appointment);
                     break;
                 }
             }
@@ -172,5 +169,8 @@ namespace LetsGoOutDemo.Functions
 
             return new OkResult();
         }
+
+        // Retry policy for calling our activity functions
+        private static RetryOptions RetryOptions = new RetryOptions(TimeSpan.FromSeconds(2), 3);
     }
 }

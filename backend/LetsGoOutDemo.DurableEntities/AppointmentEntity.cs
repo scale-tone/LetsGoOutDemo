@@ -14,9 +14,6 @@ namespace LetsGoOutDemo.DurableEntities
         public HashSet<string> Participants { get; set; }
         public HashSet<string> ParticipantsAccepted { get; set; }
 
-        // An object to output SignalR messages to. Passed via input binding.
-        private readonly IAsyncCollector<SignalRMessage> signalRCollector;
-
         // ctor
         public AppointmentEntity(IAsyncCollector<SignalRMessage> signalRCollector)
         {
@@ -47,6 +44,7 @@ namespace LetsGoOutDemo.DurableEntities
                 // ... then notifying everybody and killing ourselves
                 await this.NotifyParticipants(this.Participants.ToArray(), AppointmentStatusEnum.Declined);
                 Entity.Current.DeleteState();
+                return;
             }
 
             this.ParticipantsAccepted.Add(response.NickName);
@@ -69,6 +67,9 @@ namespace LetsGoOutDemo.DurableEntities
         {
             return context.DispatchAsync<AppointmentEntity>(signalRCollector);
         }
+
+        // An object to output SignalR messages to. Passed via input binding.
+        private readonly IAsyncCollector<SignalRMessage> signalRCollector;
 
         // Informs participants of the appointment state changes via SignalR
         private async Task NotifyParticipants(string[] nickNames, AppointmentStatusEnum status)
