@@ -4,6 +4,6 @@ import { action, observable, computed } from 'mobx';
 export class MainState {
 
     @observable
-    someString: string = 'some value';
+    someString: string = 'default';
 
 }
