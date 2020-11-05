@@ -43,7 +43,10 @@ namespace LetsGoOutDemo.AspNetCore
             }
 
             // Also adding the initiator to the list
-            participants.Add(initiatorNickName);
+            if(!participants.Contains(initiatorNickName))
+            {
+                participants.Add(initiatorNickName);
+            }
 
             // Creating new appointment instance
             var appointmentId = Guid.NewGuid();
