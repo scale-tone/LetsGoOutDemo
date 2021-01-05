@@ -5,7 +5,7 @@
   "homepage": "/api/ui",
   "dependencies": {
     "@aspnet/signalr": "^1.1.4",
-    "axios": "^0.19.0",
+    "axios": "^0.21.1",
     "bootstrap": "^4.3.1",
     "mobx": "^5.10.1",
     "mobx-react": "^6.1.1",
