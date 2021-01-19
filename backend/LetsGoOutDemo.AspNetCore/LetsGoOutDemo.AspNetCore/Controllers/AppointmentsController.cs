@@ -1,5 +1,8 @@
-﻿using System;
+using System;
+using System.IO;
 using System.Linq;
+using System.Net;
+using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.SignalR.Management;
@@ -98,6 +101,13 @@ namespace LetsGoOutDemo.AspNetCore
             }
 
             return this.Ok();
+        }
+
+        [HttpGet]
+        [Route("api/check")]
+        public async Task<IActionResult> HealthCheck()
+        {
+            return this.Ok(Assembly.GetExecutingAssembly().GetName().Version.ToString());
         }
 
         /// <summary>
