@@ -5,7 +5,7 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
 using System.Linq;
 
-namespace LetsGoOutDemo.DurableEntities
+namespace LetsGoOutDemo.Functions
 {
     public static class ServeStaticFiles
     {
@@ -13,11 +13,19 @@ namespace LetsGoOutDemo.DurableEntities
         [FunctionName("ui")]
         public static IActionResult Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "ui/{p1?}/{p2?}/{p3?}")] HttpRequest req,
+            string p1,
+            string p2,
+            string p3,
             ExecutionContext context
         )
         {
             string root = context.FunctionAppDirectory;
-            string path = req.Path.Value;
+
+            // Sanitizing input, just in case
+            string path = $"/api/ui/{Path.GetFileName(p1)}";
+            path += p2 != null ? $"/{Path.GetFileName(p2)}" : "";
+            path += p3 != null ? $"/{Path.GetFileName(p3)}" : "";
+
             var contentType = FileMap.FirstOrDefault((kv => path.StartsWith(kv[0])));
             if(contentType != null)
             {
