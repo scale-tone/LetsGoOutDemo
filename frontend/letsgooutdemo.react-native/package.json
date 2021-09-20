@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@aspnet/signalr": "^1.1.4",
-    "axios": "^0.19.2",
+    "axios": "^0.21.2",
     "expo": "~38.0.8",
     "expo-status-bar": "^1.0.2",
     "mobx": "^5.15.4",
