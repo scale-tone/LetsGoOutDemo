@@ -23,9 +23,9 @@ namespace LetsGoOutDemo.AspNetCore
         private readonly ServiceHubContext hubContext;
         private readonly IDatabase redis;
 
-        public AppointmentsController(Task<ServiceHubContext> serviceHubContextTask, ConnectionMultiplexer redisConnection)
+        public AppointmentsController(ServiceHubContext serviceHubContext, ConnectionMultiplexer redisConnection)
         {
-            this.hubContext = serviceHubContextTask.Result;
+            this.hubContext = serviceHubContext;
             this.redis = redisConnection.GetDatabase();
         }
 

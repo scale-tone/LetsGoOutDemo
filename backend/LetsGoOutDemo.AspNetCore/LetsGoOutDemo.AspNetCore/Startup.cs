@@ -49,9 +49,8 @@ namespace LetsGoOutDemo.AspNetCore
                 .BuildServiceManager();
 
 
-            // Adding the initialization Task to the container, not the IServiceHubContext itself.
-            // That's OK, because the Task will only run once (as guaranteed by the framework).
-            services.AddSingleton(serviceManager.CreateHubContextAsync(nameof(LetsGoOutHub), default));
+            // Creating ServiceHubContext and pushing it to DI
+            services.AddSingleton(serviceManager.CreateHubContextAsync(nameof(LetsGoOutHub), default).Result);
 
             // Finally connecting to Redis
             string redisConnString = this.Configuration.GetValue<string>(Constants.RedisConnectionStringEnvironmentVariableName);
