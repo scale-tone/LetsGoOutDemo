@@ -27,7 +27,7 @@ namespace LetsGoOutDemo.AspNetCore
             // Replacing SignalR's userId provider with our custom
             services.AddTransient<IUserIdProvider, NickNameUserIdProvider>();
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc(options => { options.EnableEndpointRouting = false; });
 
             string signalRConnString = this.Configuration.GetValue<string>(Constants.AzureSignalRConnectionStringEnvironmentVariableName);
             signalRConnString = GetFromKeyVaultIfNeeded(signalRConnString);
@@ -48,7 +48,7 @@ namespace LetsGoOutDemo.AspNetCore
                 .Build();
 
             // Adding the initialization Task to the container, not the IServiceHubContext itself.
-            // That's OK, because the Task will only ran once (as guaranteed by the framework).
+            // That's OK, because the Task will only run once (as guaranteed by the framework).
             services.AddSingleton(serviceManager.CreateHubContextAsync(nameof(LetsGoOutHub)));
 
             // Finally connecting to Redis
@@ -83,6 +83,7 @@ namespace LetsGoOutDemo.AspNetCore
                 // so in this case it will be /api/negotiate.
                 routes.MapHub<LetsGoOutHub>("/api");
             });
+
         }
 
         /// <summary>
