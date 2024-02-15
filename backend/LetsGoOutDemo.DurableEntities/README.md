@@ -12,7 +12,7 @@ Sends appointment state change notifications to web clients via [Azure SignalR S
 * [Get yourself an Azure SignalR Service instance](https://docs.microsoft.com/en-us/azure/azure-signalr/signalr-quickstart-dotnet-core#create-an-azure-signalr-resource). NOTE: the [**Service Mode** setting shoud be set to **Serverless**](https://docs.microsoft.com/en-us/azure/azure-signalr/signalr-quickstart-azure-functions-csharp)!
 * In the project root folder create a **local.settings.json** file, that looks like this:
 
-``
+```
 {
     "IsEncrypted": false,
     "Values": {
@@ -26,7 +26,7 @@ Sends appointment state change notifications to web clients via [Azure SignalR S
         "CORSCredentials": true
     }
 }
-``
+```
 
 * **func start**
 
