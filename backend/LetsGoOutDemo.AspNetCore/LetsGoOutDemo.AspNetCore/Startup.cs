@@ -9,6 +9,7 @@ using StackExchange.Redis;
 using System.Net;
 using Microsoft.Azure.Services.AppAuthentication;
 using System.Threading.Tasks;
+using System.Threading;
 
 namespace LetsGoOutDemo.AspNetCore
 {
@@ -45,11 +46,12 @@ namespace LetsGoOutDemo.AspNetCore
                     // ServiceTransportType.Persistent would be more efficient, but it is not reliable (connection might be dropped and never reestablished)
                     option.ServiceTransportType = ServiceTransportType.Transient;
                 })
-                .Build();
+                .BuildServiceManager();
+
 
             // Adding the initialization Task to the container, not the IServiceHubContext itself.
             // That's OK, because the Task will only run once (as guaranteed by the framework).
-            services.AddSingleton(serviceManager.CreateHubContextAsync(nameof(LetsGoOutHub)));
+            services.AddSingleton(serviceManager.CreateHubContextAsync(nameof(LetsGoOutHub), default));
 
             // Finally connecting to Redis
             string redisConnString = this.Configuration.GetValue<string>(Constants.RedisConnectionStringEnvironmentVariableName);
@@ -76,14 +78,16 @@ namespace LetsGoOutDemo.AspNetCore
             app.UseDefaultFiles();
             app.UseStaticFiles();
 
-            app.UseAzureSignalR(routes =>
-            {
+            app.UseRouting();
+
+            app.UseEndpoints(routes => {
+
                 // Hub name is derived from generic type parameter.
                 // Path argument value determines the /negotiate endpoint's path, 
                 // so in this case it will be /api/negotiate.
                 routes.MapHub<LetsGoOutHub>("/api");
-            });
 
+            });
         }
 
         /// <summary>

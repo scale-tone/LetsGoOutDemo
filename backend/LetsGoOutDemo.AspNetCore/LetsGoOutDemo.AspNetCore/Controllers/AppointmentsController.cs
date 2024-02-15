@@ -20,10 +20,10 @@ namespace LetsGoOutDemo.AspNetCore
         private const string ParticipantsSetSuffix = "_participants";
         private const string ParticipantsAcceptedSetSuffix = "_participants_accepted";
 
-        private readonly IServiceHubContext hubContext;
+        private readonly ServiceHubContext hubContext;
         private readonly IDatabase redis;
 
-        public AppointmentsController(Task<IServiceHubContext> serviceHubContextTask, ConnectionMultiplexer redisConnection)
+        public AppointmentsController(Task<ServiceHubContext> serviceHubContextTask, ConnectionMultiplexer redisConnection)
         {
             this.hubContext = serviceHubContextTask.Result;
             this.redis = redisConnection.GetDatabase();
@@ -36,6 +36,7 @@ namespace LetsGoOutDemo.AspNetCore
             var participants = (await this.Request.ReadAsStringAsync())
                 .Split(',')
                 .Select(n => n.Trim())
+                .Where(n => !string.IsNullOrEmpty(n))
                 .ToList();
 
             string initiatorNickName = this.Request.Headers[NickNameHeaderName];
@@ -101,13 +102,6 @@ namespace LetsGoOutDemo.AspNetCore
             }
 
             return this.Ok();
-        }
-
-        [HttpGet]
-        [Route("api/check")]
-        public async Task<IActionResult> HealthCheck()
-        {
-            return this.Ok(Assembly.GetExecutingAssembly().GetName().Version.ToString());
         }
 
         /// <summary>
